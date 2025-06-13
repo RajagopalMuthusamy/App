@@ -16,4 +16,4 @@ Route::controller(LoginRegisterController::class)->group(function() {
 });
 
 Route::post('/posts', [PostController::class, 'store'])->name('posts');
-Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+Route::post('/posts/{post}', [PostController::class, 'delete'])->name('delete');

@@ -24,9 +24,10 @@ class PostController extends Controller
         return redirect()->route('home')->with('success', 'Post created successfully!');
     }
 
-    public function destroy(Post $post)
+    public function delete($post)
     {
-        $post->delete();
+        $deletepost=Post::find($post);
+        $deletepost->delete();
 
         return redirect()->route('home')->with('success', 'Post deleted successfully.');
     }

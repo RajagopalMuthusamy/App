@@ -10,13 +10,13 @@ use Illuminate\Support\Facades\Hash;
 
 class LoginRegisterController extends Controller
 {
-    
+    //register page
     public function register()
     {
         return view('register');
     }
 
-    
+    //user details
     public function store(Request $request)
     {
         $request->validate([
@@ -38,13 +38,13 @@ class LoginRegisterController extends Controller
        
     }
 
-    
+    //login page
     public function login()
     {
         return view('login');
     }
 
-    
+    //login authentication
     public function authenticate(Request $request)
     {
         $credentials = $request->validate([
@@ -70,7 +70,7 @@ class LoginRegisterController extends Controller
     }
 
             
-    
+    //home page
     public function home()
     {
         if(Auth::check())
@@ -78,7 +78,9 @@ class LoginRegisterController extends Controller
             $posts = Post::where(function ($query) {
                 $query->where('visibility', 'public')
                       ->orWhere('user_id', auth()->id());
-            })->get();
+            })
+            ->with('user:id,username')
+            ->get();
 
             return view('home',['posts'=>$posts]);
         }
@@ -89,11 +91,13 @@ class LoginRegisterController extends Controller
         ])->onlyInput('email');
     } 
     
+    //changepassword page
     public function changepassword()
     {
         return view('reset');
     }
 
+    //update password 
     public function updatepassword(Request $request)
     {
         $request->validate([
@@ -134,7 +138,7 @@ class LoginRegisterController extends Controller
    
     }
 
-
+    //logout
     public function logout(Request $request)
     {
         Auth::logout();
