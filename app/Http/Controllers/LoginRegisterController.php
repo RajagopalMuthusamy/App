@@ -10,11 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 class LoginRegisterController extends Controller
 {
-    public function __construct()
-    {
-        
-    }
-
+    
     public function register()
     {
         return view('register');
@@ -79,7 +75,10 @@ class LoginRegisterController extends Controller
     {
         if(Auth::check())
         {
-            $posts = Post::where('user_id', Auth::id())->get();
+            $posts = Post::where(function ($query) {
+                $query->where('visibility', 'public')
+                      ->orWhere('user_id', auth()->id());
+            })->get();
 
             return view('home',['posts'=>$posts]);
         }

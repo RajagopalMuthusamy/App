@@ -12,11 +12,13 @@ class PostController extends Controller
     {
         $request->validate([
             'content' => 'required|string|max:5000',
+            'visibility' => 'required|in:public,private',
         ]);
 
         Post::create([
             'user_id' =>auth()->id(),
             'content' => $request->content,
+            'visibility' => $request->visibility,
         ]);
 
         return redirect()->route('home')->with('success', 'Post created successfully!');
