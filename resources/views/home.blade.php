@@ -27,8 +27,10 @@
     <h3 class="mt-4">All Posts</h3>
     @foreach ($posts as $post)
         <div class="col-8 post mb-1 p-1 border rounded">
+            @if ($post->user_id != auth()->id())
             <h6 class='text-primary'>{{ $post->user->username }}</h6>
-            <div class='d-flex justify-content-between'>
+            @endif
+            <div class='d-flex justify-content-between align-items-center'>
                 <p>{{ $post->content }}</p>
                 @if ($post->user_id == auth()->id())
                     <form action="{{ route('delete', $post->id) }}" method="POST" >
