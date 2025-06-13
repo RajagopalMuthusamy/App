@@ -26,10 +26,15 @@
 
     <h3 class="mt-5" >All Posts</h3>
     @foreach ($posts as $post)
-        <div class="post mb-2 p-2 border rounded">
-            <p>{{ $post->content }}</p>
-        </div>
-    @endforeach
+    <div class="post mb-2 p-2 border rounded">
+        <p>{{ $post->content }}</p>
+        <form action="{{ route('posts.destroy', $post->id) }}" method="POST" style="display: inline;">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this post?')">Delete</button>
+        </form>
+    </div>
+@endforeach
 
    
 

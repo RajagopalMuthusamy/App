@@ -30,11 +30,13 @@ class LoginRegisterController extends Controller
     ]);
 
 
-        User::create([
+        $user=User::create([
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password)
         ]);
+       
+       $user->passwordHistories()->create(['password' => Hash::make($request->password)]);  
 
         return redirect()->route('login');
        
@@ -77,7 +79,8 @@ class LoginRegisterController extends Controller
     {
         if(Auth::check())
         {
-            $posts=Post::all();
+            $posts = Post::where('user_id', Auth::id())->get();
+
             return view('home',['posts'=>$posts]);
         }
         
@@ -95,19 +98,39 @@ class LoginRegisterController extends Controller
     public function updatepassword(Request $request)
     {
         $request->validate([
-            'oldpassword' => 'required',
-            'new_password' => 'required|confirmed',
+            'oldpassword' => 'required|min:6',
+            'new_password' => 'required|min:6|confirmed',
             
         ]);
 
-        if (!Hash::check($request->oldpassword, auth()->user()->password)) {
+        $user=auth()->user();
+
+        if (!Hash::check($request->oldpassword, $user->password)) {
             return back()->with('error', 'Incorrect old password');
            
              }
-        User::whereId(auth()->user()->id) ->update([
+
+        //check last three password
+        $recentPasswords=$user->passwordHistories()->latest()->take(3)->get();
+        foreach($recentPasswords as $past){
+            if (Hash::check($request->new_password, $past->password)) {
+                return back()->with('error', 'You can not use your last three passwords');
+               
+                 }
+    
+        }
+
+        $user->update([
             'password' => Hash::make($request->new_password)
         ]);
-        return redirect()->route('home')->with('success', 'password changed successfully');
+        $user->passwordHistories()->create(['password' => Hash::make($request->new_password)]);
+
+        $passwordDelete=$user->passwordHistories()->latest()->skip(3)->take(PHP_INT_MAX)->get();
+        foreach( $passwordDelete as $ph){
+            $ph->delete();
+        }
+        
+        return redirect()->route('home')->with('success', 'password changed successfully!');
                 
    
     }

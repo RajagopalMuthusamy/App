@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Infinitypaul\LaravelPasswordHistoryValidation\Traits\PasswordHistoryTrait;
+use App\Models\PasswordHistory;
+use App\Models\Post;
 
 class User extends Authenticatable
 {
@@ -19,7 +21,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'username', 'email', 'password',
+        'username', 'email','password',
     ];
 
     /**
@@ -39,4 +41,10 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    
+    public function passwordHistories(){
+        return $this->hasMany(PasswordHistory::class);
+    }
+    
+
 }

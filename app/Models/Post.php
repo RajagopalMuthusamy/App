@@ -8,5 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     use HasFactory;
-    protected $fillable = ['content'];
+    protected $fillable = ['content','user_id'];
+
+    protected $casts =[
+        'content'=>'encrypted'
+    ];
 }
