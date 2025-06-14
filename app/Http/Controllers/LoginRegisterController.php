@@ -49,7 +49,7 @@ class LoginRegisterController extends Controller
     {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
-            'password' => 'required'
+            'password' => 'required|min:6'
         ]);
 
         $user = User::where('email', $request->email)->first();
@@ -91,7 +91,7 @@ class LoginRegisterController extends Controller
         ])->onlyInput('email');
     } 
     
-    //changepassword page
+    //view changepassword page
     public function changepassword()
     {
         return view('reset');
@@ -123,15 +123,17 @@ class LoginRegisterController extends Controller
     
         }
 
+        //update password in table
         $user->update([
             'password' => Hash::make($request->new_password)
         ]);
         $user->passwordHistories()->create(['password' => Hash::make($request->new_password)]);
 
-        $passwordDelete=$user->passwordHistories()->latest()->skip(3)->take(PHP_INT_MAX)->get();
-        foreach( $passwordDelete as $ph){
-            $ph->delete();
-        }
+        // //delete password (more than 3 password for user)
+        // $passwordDelete=$user->passwordHistories()->latest()->skip(3)->take(PHP_INT_MAX)->get();
+        // foreach( $passwordDelete as $pdelete){
+        //     $pdelete->delete();
+        // }
         
         return redirect()->route('home')->with('success', 'password changed successfully!');
                 
